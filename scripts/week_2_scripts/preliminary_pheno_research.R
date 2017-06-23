@@ -23,9 +23,6 @@ source("scripts/functions.R")
 #NOW THAT THIS HAS BEEN DONE ONCE, SIMPLY RUN THE FOLLOWING TO GET ACCESS TO THE MATCHED PHENOTYPES
 matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
 
-#installing package that will allow data tranformation
-#install.packages("dplyr")
-
 scatter_phenotypes <- matched_phenotypes %>% select(num_islets, Ins_per_islet, WPIC, Glu_0min, 
                       Glu_6wk, Glu_10wk, Glu_14wk, Ins_0min, Ins_6wk, Ins_10wk,
                       Ins_14wk, Glu_tAUC, Glu_iAUC, Ins_tAUC, Ins_iAUC, TG_6wk,
@@ -98,11 +95,11 @@ ghrelin_phenos <- cbind(ghrelin_phenos, gene_expressions)
 ghrelin_shortlist <- cbind(ghrelin_shortlist, gene_expressions)
 
 #save these data frames since you use them a lot
-#write.csv(ghrelin_phenos, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_phenos.csv", row.names = FALSE)
-#write.csv(ghrelin_shortlist, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist.csv", row.names = FALSE)
+write.csv(ghrelin_phenos, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_phenos.csv", row.names = FALSE)
+write.csv(ghrelin_shortlist, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist.csv", row.names = FALSE)
 #NOW THAT THIS HAS BEEN DONE ONCE, SIMPLY RUN THE FOLLOWING TO GET ACCESS TO THE MATCHED PHENOTYPES
-ghrelin_phenos <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_phenos.csv", as.is=TRUE)
-ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist.csv", as.is=TRUE)
+ghrelin_phenos <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_phenos2.csv", as.is=TRUE)
+ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv", as.is=TRUE)
 
 pairs(gene_expressions[1:6], upper.panel = panel.cor, diag.panel = panel.hist)
 pairs(ghrelin_shortlist, upper.panel = panel.cor, diag.panel = panel.hist)
@@ -114,5 +111,11 @@ round(pcor, digits=2)
 corrplot(pcor, order = "hclust" )
 
 
+Mouse.ID <- matched_phenotypes$Mouse.ID
 
+ghrelin_phenos <- cbind(Mouse.ID, ghrelin_phenos)
+ghrelin_shortlist <- cbind(Mouse.ID, ghrelin_shortlist)
+
+write.csv(ghrelin_phenos, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_phenos2.csv", row.names = FALSE)
+write.csv(ghrelin_shortlist, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv", row.names = FALSE)
 

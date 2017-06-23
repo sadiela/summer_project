@@ -54,9 +54,8 @@ snps$chr[snps$chr=="X"] <- "20"
 
 #convert a marker map organized as data frame to a list
 map <- map_df_to_list(map = snps, pos_column = "bp")
-
-
-rownames(pheno) <- rownames(expr.mrna)
+rownames(ghrelin_shortlist) <- rownames(expr.mrna)
+rownames(pheno) <- pheno[,1]
 
 #adding the column "diet days" to annot.samples??
 annot.samples$diet_days <- pheno$diet_days
@@ -65,7 +64,6 @@ annot.samples$diet_days <- pheno$diet_days
 covar2 <- model.matrix(~Sex + Generation + diet_days, data=annot.samples)
 
 #??
-rownames(pheno) <- pheno[,1]
 
 fit2 <- scan1(genoprobs=probs, 
                kinship=Glist, 

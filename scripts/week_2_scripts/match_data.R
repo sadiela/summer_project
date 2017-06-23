@@ -1,8 +1,11 @@
 #Week2
 #this script gets rid of the phenotypical data for mice that do not have gene
 #expression data
+library(dplyr)
+
 #load phenotypical data from large .csv file
 phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/pheno_clin.csv", as.is=TRUE)
+load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
 
 # for mouse id < 100, add 0 to the identifiers
 phenotypes$mouse[nchar(phenotypes$mouse) == 5] <- sub("DO-", "DO-0", phenotypes$mouse[nchar(phenotypes$mouse) == 5])
@@ -17,6 +20,9 @@ phenotypes <- phenotypes[idx,]
 
 #check that the IDs for mRNA data and phenotype data are the same
 stopifnot(annot.samples$Mouse.ID == phenotypes$Mouse.ID)
+
+# Set row names
+rownames(matched_phenotypes) <- matched_phenotypes$Mouse.ID
 
 #changing variable name
 matched_phenotypes <- phenotypes
