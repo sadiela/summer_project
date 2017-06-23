@@ -324,10 +324,71 @@ plot(x = qtl.weightchangeave.blup, map = map[[chr]], columns = 1:8, col = CCcolo
      main = colnames(qtl.weightchangeave)[1], scan1_output = qtl.weightchangeave)
 
 ## Association Mapping? ##
+# Arguments:
+#probs # probs: genoprobs object in qtl2 format.
+#mod_ghrelin_shortlist # pheno: matrix of phenotypes, samples in rows, phenotypes in columns.
+#1 through 11# idx: column index of the phenotype that you want to map.
+#add_covar # addcovar: covariates matrix as used in scan1().
+#not necessary.. # intcovar: covariate to interact with QTL.
+#kin # k: list of kinship matrices.
+# snps # markers: data.frame containing 4 columns: marker, chr, bp, cM.
+#depends on chromosome # chr: Chromosome to map on.
+#what # start: start position for mapping in Mb.
+#what # end: end position for mapping in Mb.
+#4 # ncores: number of cores to use in mappin.
+#pathname?# db.file: Location of the mySQL database containing the Sanger SNPs.
+
+# Let's tryyyyy insperislet: insperislet, 5, 91.60626, 96.40144
+assoc_mapping = function(probs, pheno, idx, addcovar, intcovar = NULL, k, 
+                         markers, chr, start, end, ncores, db.file = "/Users/s-allens/Documents/ssp/summer_project/data/ccfoundersnps.sqlite") {
+  # subsetting probs and k
+  probs = probs[,chr]
+  k = k[[chr]]
+  
+  # split markers into a vector of map positions
+  map = split(markers[,3]*1e-6, markers[,2])
+  nm = split(markers[,1], markers[,2])
+  map = mapply(function(x,y) {names(x) = y;x}, map, nm)
+  map = map[order(as.numeric(names(map)))]
+  
+  # Extract SNPs from the database
+  my_db = src_sqlite(db.file, create = FALSE)
+  snpinfo = tbl(my_db, sql(paste0("SELECT * FROM snps WHERE chr='", 
+                chr, "' AND pos_Mbp>=", start, " AND pos_Mbp<=", end))) %>%
+                collect(n = Inf)
+  
+  # Replace names for future methods
+  colnames(snpinfo)[c(1,3)] = c("snp", "pos")
+  
+  # Index groups of similar SNPs
+  snpinfo = index_snps(map = map, snpinfo) 
+  
+  # Find which phenotype data exist
+  sel = !is.na(pheno[,idx])
+  
+  # Convert genoprobs to snpprobs
+  snppr = genoprob_to_snpprob(probs[sel,], snpinfo)
+  
+  # Scan1
+  assoc = scan1(pheno = pheno[sel, idx, drop = FALSE], kinship = k[sel,sel],
+                genoprobs = snppr, addcovar = addcovar[sel,], intcovar = addcovar[sel, intcovar],
+                cores = ncors)
+  
+  # Return scan data
+  return(list(assoc, snpinfo))  
+}
+
+library(dbplyr)
+
+assoc.insperislet <- assoc_mapping(probs = probs, pheno = mod_ghrelin_shortlist, idx = 9, 
+                                   addcovar = add_covar, k = kin, markers = snps, chr = 5,
+                                   start = 91, end = 97, ncores = 4)
 
 
+index_snps(map = map, snpinfo = snpinfo)
 
 
-
-
+### Association mapping: Issue in extractibg SNPs from the database:
+#  Error in paste0("SELECT * FROM snps WHERE chr='", chr, "' AND pos_Mbp>=",  : 
+#                    cannot coerce type 'closure' to vector of type 'character'
 
