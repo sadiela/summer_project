@@ -28,14 +28,14 @@ for(i in 3:10) {
 #add expression data
 #retrieve expression data for all genes of interest
 ghrl_exp <- get_exp_dat("Ghrl")
-ghrs_exp <- get_exp_dat("Ghsr")
+ghsr_exp <- get_exp_dat("Ghsr")
 sst_exp <- get_exp_dat("Sst")
 ins1_exp <- get_exp_dat("Ins1")
 ins2_exp <- get_exp_dat("Ins2")
 sstr3_exp <- get_exp_dat("Sstr3")
 
 #create a dataframe with expression data
-gene_expressions <- data.frame(ghrl = ghrl_exp, ghrs = ghrs_exp, 
+gene_expressions <- data.frame(ghrl = ghrl_exp, ghsr = ghsr_exp, 
                                sst = sst_exp, ins1 = ins1_exp, 
                                ins2 = ins2_exp, sstr = sstr3_exp)
 

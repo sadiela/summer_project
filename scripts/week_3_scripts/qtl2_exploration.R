@@ -36,7 +36,7 @@ mod_ghrelin_shortlist$sex <- NULL
 mod_ghrelin_shortlist$G83_ins_secrete <- NULL
 mod_ghrelin_shortlist$G167_ins_secrete <- NULL
 mod_ghrelin_shortlist$X <- NULL
-mod_ghrelin_shortlist$ghrs <- NULL
+mod_ghrelin_shortlist$ghsr <- NULL
 mod_ghrelin_shortlist$sstr <- NULL
 mod_ghrelin_shortlist$ins2 <- NULL
 mod_ghrelin_shortlist$ghrl <- NULL
@@ -96,6 +96,7 @@ map <- map_df_to_list(map = snps, pos_column = "bp")
 # covariates, and the X chromosome covariates. This computer (MLG-CCMBP01)
 # does not have a lot of computational power, so I will run a scan of
 # one phenotype at a time. 
+
 qtl.glu0min <- scan1(genoprobs = probs, pheno = mod_ghrelin_shortlist[,1, drop = FALSE],
                      kinship = kin, addcovar = add_covar, cores = 4)
 

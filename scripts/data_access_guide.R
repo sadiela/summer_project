@@ -1,8 +1,18 @@
 # Data Access Guide
 # Sadie Allen
 # June 21, 2017
+# Reminders of which data are stored where and how to access them
 
-# Reminders of which data are stored where and how to access them3
+## Loading Data ##
+# islet data
+load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
+rownames(annot.samples) <- annot.samples$Mouse.ID
+
+# phenotype data
+matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
+ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv")
+rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
+rownames(matched_phenotypes) <- ghrelin_shortlist[,1]
 
 ## annot.mrna ##
 # Contains name, function, and position information about the 21,771 genes

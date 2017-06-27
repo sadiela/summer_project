@@ -61,7 +61,7 @@ mod_ghrelin_shortlist$G83_ins_secrete <- NULL
 mod_ghrelin_shortlist$G167_ins_secrete <- NULL
 mod_ghrelin_shortlist$X <- NULL
 mod_ghrelin_shortlist$Mouse.ID <- NULL
-mod_ghrelin_shortlist$ghrs <- NULL
+mod_ghrelin_shortlist$ghsr <- NULL
 mod_ghrelin_shortlist$sstr <- NULL
 mod_ghrelin_shortlist$ins2 <- NULL
 mod_ghrelin_shortlist$ghrl <- NULL

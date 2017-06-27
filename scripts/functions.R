@@ -85,6 +85,19 @@ pval_vec_1co <- function(dataset, covar, var) {
   return(pvals)
 }
 
+# function to calculate p-values for one phenotype and many variates (gene expressions
+# in this case); 
+# In my usages, express_dat refers to the rankz.mrna object and covar refers to sex
+pvals_changing_covar <- function(pheno, express_dat, covar) {
+  pvals <- numeric(0)
+  for(i in 1:ncol(express_dat)) {
+    pvals <- as.numeric(as.character(c(pvals, anova(lm(pheno ~ covar + express_dat[,i]))[2,5])))
+    print(i)
+  }
+  return(p.adjust(pvals, method = "BH")) #return list of adjusted pvals 
+}
+
+
 #function that checks for insignificant p values
 #Wow, R doesnt allow more than one return value. Thats nice.
 #to use after pval_vec, could easily be switched to return the significant pvals
@@ -104,6 +117,38 @@ significance <- function(pvals) {
   names(info) <- c("insignificant_effect", "significant_effect")
   return(info)
 }
+
+# Takes a list of (named) p-values and returns a list of all under the significance level
+sig_list <- function(pval_vec, siglev) {
+  empty_vec <- numeric(0)
+  for(i in 1:length(pval_vec)) {
+    if(pval_vec[i] < siglev ) {
+      empty_vec <- c(empty_vec, pval_vec[i])
+    }
+  }
+  sorted_sig <- sort(empty_vec, decreasing = FALSE)
+  return(sorted_sig)
+}
+
+# Function that takes a chromosome and position and returns
+# the genoprobs at that position
+get_genoprob <- function(chr, pos){ 
+  chr_data <- snps[snps$chr == chr,]
+  chr_data$cM <- chr_data$cM - pos
+  chr_data <- chr_data[chr_data$cM >= 0,]
+  location <- which(snps$marker == chr_data$marker[1])
+  return(genoprobs[,,location])
+}
+
+get_gene_names <- function(){
+  gene_names <- character(0)
+  for(i in 1:ncol(rankz.mrna)) { 
+    gene_name <- annot.mrna$symbol[i]
+    gene_names <- c(gene_names, gene_name)
+  }
+  return(gene_names)
+}
+
 
 ##########################################
 # P-value functions (Gary)
@@ -153,12 +198,72 @@ fit_c2 <- function(pheno, var, covar1, covar2, dataset) {
   return(pval)
 }
 
-#####################
-#QTL Stuff
-#####################
-genotype <- function(chr, pos) {
-  if (chr > 0 && chr < 21 && pos >= 0 && pos <= 100) {
-    return(f2g$geno[[chr]]$data[,find.marker(f2g, chr=chr, pos=pos)])
-  }
+# BIC Score model analysis
+# X: gene expression data for a given gene
+# Y: quantitative measurement of clinical phenotype
+# Q: genotype at a given marker
+triple.fit <- function(X, Y, Q) {
+  
+  # Remove any NA values from the data
+  #indx <- sort(unique(c(which(is.na(X)), which(is.na(Y)), which(is.na(Q)))))
+  #X <- X[-indx]
+  #Y <- Y[-indx]
+  #Q <- Q[-indx]
+  #print(paste("Removed ", length(indx), " rows with NA values from data.", sep=""))
+  
+  # Calculate BIC scores for models
+  bic.independent <- BIC(lm(X~Q)) + BIC(lm(Y~Q)) # X<-Q->Y
+  bic.reactive <- BIC(lm(X~Y)) + BIC(lm(Y~Q)) # Q->Y->X
+  bic.causal <- BIC(lm(X~Q)) + BIC(lm(Y~X)) # Q->X->Y
+  bic.complex <- BIC(lm(X~Q)) + BIC(lm(Y~Q+X))
+  
+  # Print out the scores from each model
+  print("BIC Scores of each model")
+  scores <- c(bic.independent, bic.reactive, bic.causal, bic.complex)
+  names(scores) <- c("independent", "reactive", "causal", "complex")
+  print(scores)
+  
+  # Make lowest BIC score 0 and linearize all other scores accordingly to calculate Delta values
+  deltas <- scores - min(scores)
+  
+  # Estimate the strength of evidence for each model
+  strengths <- exp(-0.5 * deltas) / sum(exp(-0.5 * deltas))
+  
+  # Print out the probabilities of each model being the likely explanation for the data
+  print("Probability of each model explaining the data")
+  print(strengths * 100)
+  
+  # Print out how many more times likely the best model is
+  print("The factor by which the best model is better than the rest")
+  print(max(strengths) / strengths)
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
