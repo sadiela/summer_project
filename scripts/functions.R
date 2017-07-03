@@ -184,7 +184,7 @@ fit_c1 <- function(pheno, var, covar, dataset) {
 }
 
 # function to compute pvalues adjusted for two covariate
-#ORDER: pheno, variable of interest, covar1, covar2
+# ORDER: pheno, variable of interest, covar1, covar2
 my.aov.c2 <- function(x,f,c1,c2){
   fit1 <- lm(x ~ f+c1+c2)
   fit0 <- lm(x ~ c1+c2)
@@ -197,6 +197,8 @@ fit_c2 <- function(pheno, var, covar1, covar2, dataset) {
   pval <-   anova(fit0, fit1)[2,6]
   return(pval)
 }
+
+###########################################################################
 
 # BIC Score model analysis
 # X: gene expression data for a given gene
@@ -239,7 +241,15 @@ triple.fit <- function(X, Y, Q) {
   
 }
 
-
+# Function that prints the minimum and the average number of transcripts
+# for the expression of one gene
+num_expressions <- function(gene_name) {
+  gene_id <- annot.mrna$id[annot.mrna$symbol == gene_name]
+  expr_data <- raw.mrna[, colnames(raw.mrna) == gene_id]
+  info <- c(min(expr_data), mean(expr_data))
+  names(info) <- c("minimum expression", "average expression")
+  return(info)
+}
 
 
 

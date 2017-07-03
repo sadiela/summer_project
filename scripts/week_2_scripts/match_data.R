@@ -21,11 +21,11 @@ phenotypes <- phenotypes[idx,]
 #check that the IDs for mRNA data and phenotype data are the same
 stopifnot(annot.samples$Mouse.ID == phenotypes$Mouse.ID)
 
-# Set row names
-rownames(matched_phenotypes) <- matched_phenotypes$Mouse.ID
-
 #changing variable name
 matched_phenotypes <- phenotypes
+
+# Set row names
+rownames(matched_phenotypes) <- matched_phenotypes$Mouse.ID
 
 #This section works
 #saving matched phenotypes to a new data file

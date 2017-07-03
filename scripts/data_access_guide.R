@@ -9,10 +9,16 @@ load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
 rownames(annot.samples) <- annot.samples$Mouse.ID
 
 # phenotype data
-matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
-ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv")
-rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
-rownames(matched_phenotypes) <- ghrelin_shortlist[,1]
+#matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/old_data/matched_pheno_clin.csv", as.is=TRUE)
+#ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/old_data/ghrelin_shortlist2.csv")
+#rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
+#rownames(matched_phenotypes) <- ghrelin_shortlist[,1]
+
+# UPDATED PHENOTYPE DATA
+matched_phenos <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_phenos.csv", as.is=TRUE)
+rownames(matched_phenos) <- matched_phenos[,1]
+ghrelin_list <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
+rownames(ghrelin_list) <- ghrelin_list[,1]
 
 ## annot.mrna ##
 # Contains name, function, and position information about the 21,771 genes

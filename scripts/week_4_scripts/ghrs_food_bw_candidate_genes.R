@@ -1,10 +1,11 @@
 # Exploring the relationship between ghrelin receptors, average food intake, and bodyweight
 # Sadie Allen
 # Jun 26, 2017
-# In this script I will delve deeper into the relationships between ghrelin receptors, 
-# average food intake, and bodyweight.
+# In this script I will find genes that have a significant effect on Ghsr, food_ave, and weight_sac
 
+# prep to run script by clearing environment and setting the proper working directory
 rm(list = ls())
+setwd("/Users/s-allens/Documents/ssp/summer_project/")
 
 ## Load Libraries ##
 library(tidyverse)
@@ -17,65 +18,14 @@ library(RSQLite)
 
 ## Load Data ##
 # Phenotype Data
-ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv")
-rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
+ghrelin_list <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
+rownames(ghrelin_list) <- ghrelin_list[,2]
 # Islet Data
 load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
 rownames(annot.samples) <- annot.samples$Mouse.ID
 
 # Load all functions
 source("scripts/functions.R")
-
-
-## Step 1: Find QTL peak for ghsr (14) ##
-# GARY QUESTION: What is the threshold for a significant QTL peak? 6, 8, 11
-
-###### QTL PREP ######## (needed for all qtl scans)
-# Convert genoprobs from DOQTL to QTL2 format
-probs <- probs_doqtl_to_qtl2(genoprobs, snps, pos_column = "bp")
-
-# This just changes the chromosome names "X" to "20"
-snps$chr <- as.character(snps$chr)
-snps$chr[snps$chr=="X"] <- "20"
-
-# Calculate kinship
-kin <- calc_kinship(probs = probs, type = "loco", cores = 4)
-
-# Additive covariates
-temp = merge(annot.samples, ghrelin_shortlist, by = "row.names")
-rownames(temp) = temp[,1]
-# annot.samples <- merge(annot.samples, diet_days_id, by.x="Mouse.ID", by.y = "Mouse.ID")
-# Now, create the covariate
-add_covar <- model.matrix(~Sex + Generation + diet_days, data = temp)[,-1]
-
-# Convert a marker map organized as data frame to a list
-map <- map_df_to_list(map = snps, pos_column = "bp")
-
-
-### RUNNING AND PLOTTING SCANS ###
-
-# Perform scan
-qtl.ghsr <- scan1(genoprobs = probs, pheno = ghrelin_shortlist[,colnames(ghrelin_shortlist)=="ghsr", drop = FALSE],
-                     kinship = kin, addcovar = add_covar, cores = 4)
-# Plot scan
-plot_scan1(x = qtl.ghsr, map = map, main = colnames(qtl.ghsr)[1])
-# Find peak positions
-find_peaks(qtl.ghsr, map, threshold = 6, drop = 1.5) # What does the drop argument do?
-# chromosome 4, pos 11.984686, lod = 6.859136 (interval 0.207518 - 13.32408)
-# chromosome 18, pos 4.474313, lod = 7.822138 (interval 0.26149 - 10.21129)
-
-Nhs_exp <- get_exp_dat("Nhs")
-ghrelin_shortlist <- cbind(ghrelin_shortlist, Nhs_exp)
-qtl.Nhs <- scan1(genoprobs = probs, pheno = ghrelin_shortlist[,colnames(ghrelin_shortlist)=="Nhs_exp", drop = FALSE],
-                 kinship = kin, addcovar = add_covar, cores = 4)
-plot_scan1(x = qtl.Nhs, map = map, main = colnames(qtl.Nhs)[1])
-find_peaks(qtl.Nhs, map, threshold = 6, drop = 1.5) # What does the drop argument do?
-# chromosome 18, pos 43.10387, LOD 9.471 (located on the X chromosome...)
-
-
-# GARY QUESTION: How do I get the genotypes at the peaks?
-
-## Step 2: Find genes that have a significant effect on Ghsr, food_ave, and weight_sac ## 
 
 # Generates a list of the gene names
 gene_names <- get_gene_names()
@@ -227,19 +177,66 @@ cor(ghrelin_shortlist$ghsr, ghrelin_shortlist$Ins2_exp)
 cor(ghrelin_shortlist$ghsr, ghrelin_shortlist$Dapl1_exp)
 # -0.479
 
-
+# Make sure that all genes are expressed at a significant level to be used accurately in research
 # Ghsr
 # Nhs, Ptprz1, Hhex, Fgf14, Arg1, Efnb3, Slc16a7, Rbp4 (most significant genes)
+num_expressions("Nhs")
+num_expressions("Ptprz1")
+num_expressions("Hhex")
+num_expressions("Fgf14") # min 3... average 89
+num_expressions("Arg1")
+num_expressions("Efnb3")
+num_expressions("Slc16a7")
+num_expressions("Rbp4") # min = 552 this is a good one... I think
 # food_ave
 # St8sia2, Bsdc1, E2f1, Adam1a, Wdr45, Ebna1bp2, Slc46a3, Dnajc11, Prmt1, Tcp11l2
+num_expressions("St8sia2") #min 3
+num_expressions("Bsdc1") # min 1350, good
+num_expressions("E2f1")
+num_expressions("Adam1a")
+num_expressions("Wdr45")
+num_expressions("Ebna1bp2")
+num_expressions("Slc46a3")
+num_expressions("Dnajc11")
+num_expressions("Prmt1")
+num_expressions("Tcp11l2")
 # weight_sac
 # Fkbp11, Nucb2, Klhl24, Wdr45, Ormdl3, Ssr4, Ins2, Klf11, Dapl1, Gm16515
+num_expressions("Fkbp11")
+num_expressions("Nucb2")
+num_expressions("Klhl24")
+num_expressions("Ormdl3")
+num_expressions("Ssr4")
+num_expressions("Ins2")
+num_expressions("Klf11")
+num_expressions("Dapl1")
+num_expressions("Gm16515")
+#All of these are fine
+
+## CANDIDATE GENES ##
+# Ghsr_exp: Nhs, Ptprz1, Hhex, Fgf14, Arg1, Efnb3, Slc16a7, Rbp4 
+# Food_ave: St8sia2, Bsdc1, E2f1, Adam1a, Wdr45, Ebna1bp2, Slc46a3, Dnajc11, Prmt1, Tcp11l2
+# Weight_sac: Fkbp11, Nucb2, Klhl24, Wdr45, Ormdl3, Ssr4, Ins2, Klf11, Dapl1, Gm16515
+######################
 
 
-# Check number of transcripts for a particular gene (if very low, data isn't trustworthy)
-gene_name <- INSERT_DESIRED_NAME
-gene_id <- annot.mrna$id[annot.mrna$symbol == gene_name]
-expr_data <- raw.mrna[, colnames(raw.mrna) == gene_id]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
