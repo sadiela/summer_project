@@ -16,6 +16,9 @@ library(qtl2convert)
 library(qtl2plot)
 library(RSQLite)
 
+# Load functions
+source("scripts/functions.R")
+
 # The first step in the user guide is to calculate genotype 
 # probabilities using the calc_genoprob() function. However,
 # I do not have to do this because when I load the islet data:

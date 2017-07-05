@@ -180,6 +180,8 @@ Fzd8_geno <- get_genoprob(18, 6.657569)
 Svil_geno <- get_genoprob(18, 4.772599)
 Mpp7_geno <- get_genoprob(18, 7.003513)
 
+Ghsr_geno <- get_genoprob(18, 4.474313)
+
 
 # BIC Modeling! :) 
 # Remember, triple.fit takes: 
@@ -199,6 +201,8 @@ triple.fit(cand_exp_data$Fzd8, ghrelin_list$ghsr_exp, Fzd8_geno)
 
 triple.fit(cand_exp_data$Svil, ghrelin_list$ghsr_exp, Svil_geno)
 # suggests a causal model: Q -> X -> Y (genotype -> Svil_exp -->  ghsr_exp)
+
+triple.fit(get_exp_dat("Svil"), ghrelin_list$ghsr_exp, Ghsr_geno) #rerun w correct peak
 
 triple.fit(cand_exp_data$Mpp7, ghrelin_list$ghsr_exp, Mpp7_geno)
 # inconclusive, (reactive - causal < 5)
