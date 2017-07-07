@@ -1,17 +1,13 @@
-#FUNCTION LIBRARY
-#load qtl library
+# FUNCTION LIBRARY
+# This file contains many functions that are used throughout the rest of my scripts
+# To load all of these functions, use the command source("scripts/functions.R")
+
+
+# load qtl library
 library(qtl)
 library(ggplot2)
 
-#functions:
-#panel.cor and panel.hist: use with pair() to create gridded scatterplots
-#gene_exp_data: get mrna expression data for different genes
-#pval_vec: returns a vector of pvalues testing the significance of a covariate on a phenotype
-#significance: sorts results of pval_vec
-#fit:
-#fit_c1:
-#fit_c2:
-
+# Panel.cor and panel.hist can be used with pair() to create gridded scatterplots
 # some useful plotting functions
 # see documentation for "pairs" function 
 panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
@@ -36,7 +32,7 @@ panel.hist <- function(x, ...)
 }
 
 #function to get mrna expression data for different genes
-#takes: name of gene
+#takes: name of gene (string)
 #returns: column containing normalized expression data from the 378 mice
 get_exp_dat <- function(gene_name) {
   #use the annot.mrna dataframe to get the ID of the gene requested
@@ -46,12 +42,14 @@ get_exp_dat <- function(gene_name) {
   return(expr_data)
 }
 
-#making a function that returns a list of pvalues after
-#testing the importance of a covariate to a phenotype
-#USAGE: dataset must contain the covariate in question 
+# A function that returns a list of pvalues after
+# testing the importance of a covariate to a phenotype
+# USAGE: dataset must contain the covariate in question
+# Will tell you the importance of the covariate to each 
+# of the other numerical data columns
 pval_vec <- function(dataset, covar) {
-  pvals <- numeric(0)
-  name_vec <- character(0)
+  pvals <- numeric(0) # create empty vector that will contain the p-values
+  name_vec <- character(0) 
   for(i in names(dataset)) {
     #print(i)
     if(class(dataset[,colnames(dataset) == i]) == "numeric") {
@@ -66,8 +64,10 @@ pval_vec <- function(dataset, covar) {
   return(pvals)
 }
 
-#list of pvals testing a variable when one covariate has already been identified
-#USAGE: dataset must contain the covariate in question 
+# List of pvals testing a variable when one covariate has already been identified
+# USAGE: dataset must contain the covariate in question 
+# This can be used if you wanted to check the significance of a gene expression trait
+# or a phenotype AFTER accounting for the effects of something else, such as sex
 pval_vec_1co <- function(dataset, covar, var) {
   pvals <- numeric(0)
   name_vec <- character(0)
@@ -98,9 +98,9 @@ pvals_changing_covar <- function(pheno, express_dat, covar) {
 }
 
 
-#function that checks for insignificant p values
-#Wow, R doesnt allow more than one return value. Thats nice.
-#to use after pval_vec, could easily be switched to return the significant pvals
+# function that checks for insignificant p values
+# Wow, R doesnt allow more than one return value. Thats nice.
+# to use after pval_vec, could easily be switched to return the significant pvals
 significance <- function(pvals) {
   covar_insignificant <- numeric(0)
   covar_significant <- numeric(0)
@@ -140,6 +140,8 @@ get_genoprob <- function(chr, pos){
   return(genoprobs[,,location])
 }
 
+# Function that returns a list of all of the gene names
+# (to be used as names/rownames)
 get_gene_names <- function(){
   gene_names <- character(0)
   for(i in 1:ncol(rankz.mrna)) { 
@@ -169,13 +171,13 @@ fit <- function(pheno, covar, dataset) {
 
 # then, to compute p-values adjusted for one covariate:
 # function to compute pvalues adjusted for one covariate
-#ORDER FOR BOTH FOLLOWING FUNCTIONS: pheno, variable of interest, confirmed covar
+# ORDER FOR BOTH FOLLOWING FUNCTIONS: pheno, variable of interest, confirmed covar
 my.aov.c1 <- function(x,f,c){
   fit1 <- lm(x ~ f+c)
   fit0 <- lm(x ~ c)
   anova(fit0, fit1)[2,6]
 }
-#OR
+# OR
 fit_c1 <- function(pheno, var, covar, dataset) {
   fit1 <- lm(dataset[,colnames(dataset)==pheno] ~ dataset[,colnames(dataset)==covar] + dataset[,colnames(dataset) == var], data = dataset)
   fit0 <- lm(dataset[,colnames(dataset)== pheno] ~ dataset[,colnames(dataset)==covar], data = dataset)
@@ -183,7 +185,7 @@ fit_c1 <- function(pheno, var, covar, dataset) {
   return(pval)
 }
 
-# function to compute pvalues adjusted for two covariate
+# function to compute pvalues adjusted for two covariates
 # ORDER: pheno, variable of interest, covar1, covar2
 my.aov.c2 <- function(x,f,c1,c2){
   fit1 <- lm(x ~ f+c1+c2)
@@ -242,7 +244,7 @@ triple.fit <- function(X, Y, Q) {
 }
 
 # Function that prints the minimum and the average number of transcripts
-# for the expression of one gene
+# for the expression of a gene
 num_expressions <- function(gene_name) {
   gene_id <- annot.mrna$id[annot.mrna$symbol == gene_name]
   expr_data <- raw.mrna[, colnames(raw.mrna) == gene_id]
@@ -251,8 +253,42 @@ num_expressions <- function(gene_name) {
   return(info)
 }
 
-
-
+# Association Mapping Function
+assoc_mapping = function(probs, pheno, idx, addcovar, intcovar = NULL, k, 
+                         markers, chr, start, end, ncores, db.file = "/Users/s-allens/Documents/ssp/summer_project/data/ccfoundersnps.sqlite") {
+  # subsetting probs and k
+  probs = probs[,chr]
+  k = k[[chr]]
+  
+  # split markers into a vector of map positions
+  snps$pos = snps$pos*1e-6
+  map = map_df_to_list(map = snps, pos_column = "pos")
+  
+  # Extract SNPs from the database
+  my_db = src_sqlite(db.file, create = FALSE)
+  snpinfo = tbl(my_db, sql(paste0("SELECT * FROM snps WHERE chr='", 
+                                  chr, "' AND pos_Mbp>=", start, " AND pos_Mbp<=", end))) %>% collect(n = Inf)
+  
+  # Replace names for future methods
+  colnames(snpinfo)[c(1,3)] = c("snp", "pos")
+  
+  # Index groups of similar SNPs
+  snpinfo = index_snps(map = map, snpinfo) 
+  
+  # Find which phenotype data exist
+  sel = !is.na(pheno[,idx])
+  
+  # Convert genoprobs to snpprobs
+  snppr = genoprob_to_snpprob(probs[sel,], snpinfo)
+  
+  # Scan1
+  assoc = scan1(pheno = pheno[sel, idx, drop = FALSE], kinship = k[sel,sel],
+                genoprobs = snppr, addcovar = addcovar[sel,], intcovar = addcovar[sel, intcovar],
+                cores = ncores)
+  
+  # Return scan data
+  return(list(assoc, snpinfo))  
+}
 
 
 

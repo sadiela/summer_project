@@ -17,8 +17,8 @@ rownames(annot.samples) <- annot.samples$Mouse.ID
 # UPDATED PHENOTYPE DATA
 matched_phenos <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_phenos.csv", as.is=TRUE)
 rownames(matched_phenos) <- matched_phenos[,1]
-ghrelin_list <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
-rownames(ghrelin_list) <- ghrelin_list[,1]
+ghrelin_list <- read.csv(file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
+rownames(ghrelin_list) <- ghrelin_list$Mouse.ID
 
 ## annot.mrna ##
 # Contains name, function, and position information about the 21,771 genes
@@ -39,7 +39,7 @@ gene_info <- annot.mrna[which(annot.mrna$id == "ID_YOU_WANT"), ]
 # Contains basic information about mice
 
 mouse_ids <- annot.samples$Mouse.ID # these can be used for row names on many occasions!
-# Also contains sex, generation, and age data for the mice
+# annot.samples also contains sex, generation, and age data for the mice
 
 ## rankz.mrna ##
 # Contains normalized expression data for all 21,771 genes

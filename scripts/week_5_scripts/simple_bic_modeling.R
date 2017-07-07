@@ -1,5 +1,6 @@
 # Simple BIC Modeling
 # Sadie Allen
+# July 5, 2017
 
 cor(ghsr_exp, ghrelin_list$food_ave)
 cor(svil_exp, ghsr_exp)

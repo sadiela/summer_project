@@ -2,6 +2,8 @@
 #scatterplots of ghrelin pathway-related phenotypes
 #setwd("/Users/s-allens/Documents/ssp/summer_project")
 
+rm(list = ls())
+
 library(tidyverse)
 library(plotly)
 library(qtl2)
@@ -21,7 +23,7 @@ source("scripts/functions.R")
 #saving matched phenotypes to a new data file
 #write.csv(matched_phenotypes, file = "/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", row.names = FALSE)
 #NOW THAT THIS HAS BEEN DONE ONCE, SIMPLY RUN THE FOLLOWING TO GET ACCESS TO THE MATCHED PHENOTYPES
-matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
+matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/old_data/matched_pheno_clin.csv", as.is=TRUE)
 
 scatter_phenotypes <- matched_phenotypes %>% select(num_islets, Ins_per_islet, WPIC, Glu_0min, 
                       Glu_6wk, Glu_10wk, Glu_14wk, Ins_0min, Ins_6wk, Ins_10wk,
@@ -33,12 +35,14 @@ condensed_scatter_phenos <- matched_phenotypes %>% select(num_islets, Ins_per_is
                             Glu_iAUC, Ins_tAUC, Ins_iAUC, oGTT_weight)
 
 # plot phenotypes
-pairs(scatter_phenotypes[15:26], upper.panel=panel.cor,diag.panel=panel.hist)
+quartz()
+pairs(scatter_phenotypes[1:22], upper.panel=panel.cor,diag.panel=panel.hist)
 
 #I looked at all of the correlation plots and deemed which ones looked most interesting.
 #This consisted mostly of removing intuitive data, such as the correlation between Ins_6wk
 #and Ins_10wk. I also eliminated phenotypes that did not have any strong correlations with other
 #phenotypes
+quartz()
 pairs(condensed_scatter_phenos, upper.panel=panel.cor,diag.panel=panel.hist)
 
 #phenotypes that will be relevant to my ghrelin study
