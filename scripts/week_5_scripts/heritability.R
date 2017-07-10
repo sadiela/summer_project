@@ -36,7 +36,7 @@ snps$chr[snps$chr=="X"] <- "20"
 
 # food_ave
 est_herit(pheno = ghrelin_list[,5], kinship = kin, addcovar = add_covar, cores = 4)
-# WHY DIS NO WORK?
+# DOES NOT WORK
 
 
 

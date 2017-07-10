@@ -290,6 +290,47 @@ assoc_mapping = function(probs, pheno, idx, addcovar, intcovar = NULL, k,
   return(list(assoc, snpinfo))  
 }
 
+# Allows you to loop through a list of phenotypes/gene expressions to determine 
+# if they are mediators of a particular relationship
+mediation_analysis <- function(begin, middle_name, end) {
+  middle <- get_exp_dat(middle_name)
+  # begin is linked to end
+  step1_val <- anova(lm(end ~ sex + begin))[2,5]
+  # middle is linked to begin
+  step2_val <- anova(lm(middle ~ sex + begin))[2,5]
+  # end NOT linked to begin after accounting for middle
+  step3_val <- anova(lm(end ~ sex + middle + begin))[3,5]
+  # middle and begin linked after accounting for end
+  step4_val <- anova(lm(middle ~ sex + end + begin))[3,5]
+  if(step1_val < 0.001 && step2_val < 0.001 && step3_val > 0.01 && step4_val < 0.001) {
+    print(paste(middle_name, "is a mediator of the relationship between ghsr expression and food intake", sep = " "))
+    return(TRUE)
+  } else {
+    print(paste(middle_name, "is NOT a mediator", sep = " "))
+    return(FALSE)
+  }
+}
+
+# allows you to loop through a list of phenotypes/gene expressions to determine
+# if they are the *first* step in a mediation relationship
+first_mediation_analysis <- function(begin_name, middle, end) {
+  begin <- get_exp_dat(begin_name)
+  # begin is linked to end
+  step1_val <- anova(lm(end ~ sex + begin))[2,5]
+  # middle is linked to begin
+  step2_val <- anova(lm(middle ~ sex + begin))[2,5]
+  # end NOT linked to begin after accounting for middle
+  step3_val <- anova(lm(end ~ sex + middle + begin))[3,5]
+  # middle and begin linked after accounting for end
+  step4_val <- anova(lm(middle ~ sex + end + begin))[3,5]
+  if(step1_val < 0.001 && step2_val < 0.001 && step3_val > 0.01 && step4_val < 0.001) {
+    print(paste(begin_name, "mediation relationship", sep = " "))
+    return(TRUE)
+  } else {
+    print(paste(begin_name, "NO MEDIATION RELATIONSHIP", sep = " "))
+    return(FALSE)
+  }
+}
 
 
 

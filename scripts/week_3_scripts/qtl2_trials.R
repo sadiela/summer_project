@@ -1,6 +1,7 @@
-#Week3
-#In this script, I am testing the computational capacity of my lab computer (MLG-CCMBP01)
-#setwd("/Users/s-allens/Documents/ssp/summer_project")
+# Week3
+# In this script, I am testing the computational capacity of my lab computer (MLG-CCMBP01) to see if 
+# I can realistically perform QTL scans on my computer without utilizing the cluster. 
+# setwd("/Users/s-allens/Documents/ssp/summer_project")
 
 #load libraries
 library(tidyverse)
@@ -62,12 +63,12 @@ covar2 <- model.matrix(~Sex + Generation + diet_days, data=annot.samples)
 
 #rownames should be in order...
 
-fit2 <- scan1(genoprobs=probs, 
+qtl.1 <- scan1(genoprobs=probs, 
               log10(ghrelin_shortlist[,3, drop = FALSE]), 
               addcovar=covar2, 
               cores=4, 
               reml=TRUE)
-plot(fit2, map = map)
+plot(qtl.1, map = map)
 #############################################################################
 
 #Now: Test Computation Power
@@ -105,7 +106,8 @@ fit_378_one <- scan1(genoprobs=probs,
 #~10.16 seconds
 single_pheno_times <- c(1.86, 4.13, 6.36, 10.16)
 
-#par(mfrow=c(2,2)) (this caused a crash)
+quartz()
+par(mfrow=c(4,1))
 plot(fit_100_one, map = map)
 plot(fit_200_one, map = map)
 plot(fit_300_one, map = map)
@@ -280,8 +282,8 @@ ggplot(data = scan_times, aes(x=num_pheno, y=runtime, color=num_mice)) + geom_po
 #yayy that was fun!
 
 
-#this is where i stopped and was unable to continue or understand
-#the rest of the script
+# this is where i stopped and was unable to continue or understand
+# the rest of the script that Petr provided.
 # DO NOT KNOW HOW TO USE THIS
 #####################################################################################
 maxlod <- apply(fit2$lod, 2, max)

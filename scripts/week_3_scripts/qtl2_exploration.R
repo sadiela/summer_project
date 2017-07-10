@@ -7,6 +7,14 @@
 # will be based off of Broman's qtl2 user guide, Daniel Gatti's
 # qtl2 demo, and a QTL mapping script created by Petr Simecek.
 
+# I got qtl mapping, coefficient scans, and blup scans to work, but 
+# could not get association mapping to work in this script. I generated
+# scans for the following phenotypes in this script: glu_0min, glu_sac
+# ins_0min, ins_sac, food_ave, weight_sac, g33_ins_secrete, num_islets,
+# ins_per_islet, WPIC, and weight_change_ave.
+
+rm(list = ls())
+
 # Load necessary libraries
 library(tidyverse)
 library(plotly)

@@ -10,28 +10,18 @@ load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
 rownames(annot.samples) <- annot.samples$Mouse.ID
 
 # phenotype data
-matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
-ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv")
+# Updated path names to match new directory organization
+matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_phenos.csv", as.is=TRUE)
+ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/old_data/ghrelin_shortlist2.csv")
 rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
 rownames(matched_phenotypes) <- ghrelin_shortlist[,1]
 
 
 # Load data table
-pheno_gene_exp_signif <- read.csv("/Users/s-allens/Documents/ssp/summer_project/results/pheno_gene_exp_signif.csv")
+pheno_gene_exp_signif <- read.csv("/Users/s-allens/Documents/ssp/summer_project/results/prelim_research/pheno_gene_exp_signif.csv")
 pheno_gene_exp_signif$genes <- as.character(pheno_gene_exp_signif$genes)
 pheno_gene_exp_signif$X <- NULL
 gene_names <- pheno_gene_exp_signif[,1]
-
-# Function:
-sig_list <- function(pval_vec) {
-  empty_vec <- numeric(0)
-  for(i in 1:length(pval_vec)) {
-    if(pval_vec[i] < 0.001 ) {
-      empty_vec <- c(empty_vec, pval_vec[i])
-    }
-  }
-  return(empty_vec)
-}
 
 
 # First Phenotype: Glu_0min (plasma glucose at time 0 for the oGTT collected after a 4 hr fast)
@@ -142,13 +132,19 @@ ins_sac_sig_genes <- sig_list(ins_sac_pvals)
 food_ave_pvals <- pheno_gene_exp_signif[,6]
 names(food_ave_pvals) <- gene_names
 food_ave_pvals <- sort(food_ave_pvals, decreasing = FALSE)
-food_ave_sig_genes <- sig_list(food_ave_pvals)
+food_ave_sig_genes <- sig_list(food_ave_pvals, siglev = .0001)
+head(food_ave_sig_genes)
+# St8sia2, Bsdc1, E2f1, Adam1a, Wdr45, Ebna1bp2, 
 
 # Weight_sac
 weight_sac_pvals <- pheno_gene_exp_signif[,7]
 names(weight_sac_pvals) <- gene_names
 weight_sac_pvals <- sort(weight_sac_pvals, decreasing = FALSE)
-weight_sac_sig_genes <- sig_list(weight_sac_pvals)
+weight_sac_sig_genes <- sig_list(weight_sac_pvals, siglev = .0001)
+head(weight_sac_sig_genes)
+# Fkbp11, Nucb2, Klhl24, Wdr45, Ormdl3, Ssr4
+
+save(food_ave_sig_genes, weight_sac_sig_genes, file = "data/proj_pheno_sig_genes.RData")
 
 # G33_ins_secrete
 g33_ins_secrete_pvals <- pheno_gene_exp_signif[,8]

@@ -1,6 +1,6 @@
-#Week2
-#scatterplots of ghrelin pathway-related phenotypes
-#setwd("/Users/s-allens/Documents/ssp/summer_project")
+# Week2
+# scatterplots and correlation matrices of ghrelin pathway-related phenotypes
+# setwd("/Users/s-allens/Documents/ssp/summer_project")
 
 rm(list = ls())
 

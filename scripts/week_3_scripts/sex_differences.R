@@ -2,7 +2,10 @@
 # Sadie Allen
 # June 23, 2017
 # In this script I will analyze how sex affects different phenotypes
-# and gene expressions. 
+# and gene expressions by making histograms and performing t-tests. I
+# will also create scatterplots separated by gender.
+# NOTE: IN THIS SCRIPT (and all scripts using old_data phenotypes) GHSR IS
+# WRITTEN GHRS.
 
 ## Load Libraries ##
 library(ggplot2)
@@ -11,14 +14,16 @@ library(ggplot2)
 load("/Users/s-allens/Documents/ssp/summer_project/data/DO378_islet.RData")
 rownames(annot.samples) <- annot.samples$Mouse.ID
 
-ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_shortlist2.csv")
+# 7/10 updated pathnames as file organization was altered
+ghrelin_shortlist <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/old_data/ghrelin_shortlist2.csv")
 rownames(ghrelin_shortlist) <- ghrelin_shortlist[,1]
-matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_pheno_clin.csv", as.is=TRUE)
+matched_phenotypes <- read.csv("/Users/s-allens/Documents/ssp/summer_project/data/matched_phenos.csv", as.is=TRUE)
 rownames(matched_phenotypes) <- ghrelin_shortlist[,1]
 ghrelin_shortlist$X <- NULL
 
 fat_wt <- matched_phenotypes$fat_pad_weight
 gcg_content <- matched_phenotypes$Gcg_content
+leptin <- matched_phenotypes$leptin
 ghrelin_shortlist <- cbind(ghrelin_shortlist, leptin, fat_wt, gcg_content)
 
 ## Subsetting data by gender ##
@@ -81,9 +86,9 @@ ggplot(ghrelin_shortlist, aes(x = ghrl, group = sex, fill = sex)) +
 t.test(females$ghrl, males$ghrl, alternative = "g")
 # p ≈ 0, female ghrl > male ghrl
 
-ggplot(ghrelin_shortlist, aes(x = ghsr, group = sex, fill = sex)) + 
+ggplot(ghrelin_shortlist, aes(x = ghrs, group = sex, fill = sex)) + 
   geom_histogram(position = "dodge", binwidth = 0.1) + theme_bw()
-t.test(females$ghsr, males$ghsr, alternative = "g")
+t.test(females$ghrs, males$ghsr, alternative = "g")
 # p ≈ 0, female ghsr > male ghsr
 
 ggplot(ghrelin_shortlist, aes(x = sst, group = sex, fill = sex)) + 
@@ -139,9 +144,9 @@ t.test(log10(females$fat_wt), log10(males$fat_wt), alternative = "l")
 ## Scatterplots separated by gender ##
 
 #ghrelin receptor vs food consumption vs bodyweight
-ggplot(ghrelin_shortlist, aes(x = ghsr, y = food_ave, group = sex, fill = sex, col = sex)) + 
+ggplot(ghrelin_shortlist, aes(x = ghrs, y = food_ave, group = sex, fill = sex, col = sex)) + 
   geom_point() + theme_bw() + geom_smooth(method='lm',formula=y~x)
-cor(ghrelin_shortlist$ghsr, ghrelin_shortlist$food_ave)
+cor(ghrelin_shortlist$ghrs, ghrelin_shortlist$food_ave)
 # -0.4745 correlation
 
 ggplot(ghrelin_shortlist, aes(x = food_ave, y = weight_sac, group = sex, fill = sex, col = sex)) + 
@@ -149,9 +154,9 @@ ggplot(ghrelin_shortlist, aes(x = food_ave, y = weight_sac, group = sex, fill = 
 cor(ghrelin_shortlist$food_ave, ghrelin_shortlist$weight_sac)
 # 0.726 correlation
 
-ggplot(ghrelin_shortlist, aes(x = ghsr, y = weight_sac, group = sex, fill = sex, col = sex)) + 
+ggplot(ghrelin_shortlist, aes(x = ghrs, y = weight_sac, group = sex, fill = sex, col = sex)) + 
   geom_point() + theme_bw() + geom_smooth(method='lm',formula=y~x)
-cor(ghrelin_shortlist$ghsr, ghrelin_shortlist$weight_sac)
+cor(ghrelin_shortlist$ghrs, ghrelin_shortlist$weight_sac)
 # -0.509 correlation
 
 

@@ -6,6 +6,8 @@
 # p-values for the effects of all 20,000+ gene expressions on each phenotype
 # in a list I chose based on interest and relevance to my project
 
+source("scripts/functions.R")
+
 ########################################################################
 #                            FUNCTIONS                                 #
 ########################################################################
@@ -73,11 +75,7 @@ mod_ghrelin_shortlist$diet_days <- NULL
 sex <- annot.samples$Sex
 
 # This will be the first column in the dataframe: a list of the gene names
-gene_names <- character(0)
-for(i in 1:ncol(rankz.mrna)) { 
-  gene_name <- annot.mrna$symbol[i]
-  gene_names <- c(gene_names, gene_name)
-}
+gene_names <- get_gene_names()
 
 # Create the dataframe! :)
 pvals_data <- pval_dataframe(mod_ghrelin_shortlist, rankz.mrna, sex, gene_names)
