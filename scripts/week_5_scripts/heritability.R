@@ -35,10 +35,20 @@ snps$chr <- as.character(snps$chr)
 snps$chr[snps$chr=="X"] <- "20"
 
 # food_ave
-est_herit(pheno = ghrelin_list[,5], kinship = kin, addcovar = add_covar, cores = 4)
-# DOES NOT WORK
+est_herit(pheno = ghrelin_list[,5, drop = FALSE], kinship = G, addcovar = add_covar, cores = 4)
+# food_ave: .2643249
 
+# weight_sac
+est_herit(pheno = ghrelin_list[,6, drop = FALSE], kinship = G, addcovar = add_covar, cores = 4)
+# 0.2467906
 
+# weight_6wk
+est_herit(pheno = ghrelin_list[,8, drop = FALSE], kinship = G, addcovar = add_covar, cores = 4)
+# 0.2031709
+
+# weight_change
+est_herit(pheno = ghrelin_list[,9, drop = FALSE], kinship = G, addcovar = add_covar, cores = 4)
+# 0.1411033
 
 
 

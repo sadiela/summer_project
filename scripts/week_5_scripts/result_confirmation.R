@@ -29,29 +29,29 @@ rownames(annot.samples) <- annot.samples$Mouse.ID
 source("scripts/functions.R")
 
 ##### Confirm phenotype data is normalized #####
-colnames(ghrelin_list)
+#colnames(ghrelin_list)
 
-hist(ghrelin_list$food_ave)
-hist(log10(ghrelin_list$food_ave)) # This looks more normal... I should save it as this... right?
+#hist(ghrelin_list$food_ave)
+#hist(log10(ghrelin_list$food_ave)) # This looks more normal... I should save it as this... right?
 
-hist(ghrelin_list$weight_sac)
-hist(log10(ghrelin_list$weight_sac)) # This one also looks more normal after being log transformed
+#hist(ghrelin_list$weight_sac)
+#hist(log10(ghrelin_list$weight_sac)) # This one also looks more normal after being log transformed
 
-hist(ghrelin_list$weight_6wk)
-hist(log10(ghrelin_list$weight_6wk)) # This one is also more normal
+#hist(ghrelin_list$weight_6wk)
+#hist(log10(ghrelin_list$weight_6wk)) # This one is also more normal
 
-hist(ghrelin_list$weight_change)
-hist(log10(ghrelin_list$weight_change)) # Neither of these seem super normal so I will leave it how it is
+#hist(ghrelin_list$weight_change)
+#hist(log10(ghrelin_list$weight_change)) # Neither of these seem super normal so I will leave it how it is
 
 # Normalize phenotypes
-ghrelin_list$food_ave <- log10(ghrelin_list$food_ave)
-ghrelin_list$weight_sac <- log10(ghrelin_list$weight_sac)
-ghrelin_list$weight_6wk <- log10(ghrelin_list$weight_6wk)
+#ghrelin_list$food_ave <- log10(ghrelin_list$food_ave)
+#ghrelin_list$weight_sac <- log10(ghrelin_list$weight_sac)
+#ghrelin_list$weight_6wk <- log10(ghrelin_list$weight_6wk)
 
-ghrelin_list$X <- NULL
+#ghrelin_list$X <- NULL
 
 # Save this to be used in subsequent analyses
-write.csv(ghrelin_list, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
+#write.csv(ghrelin_list, file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
 
 ghrelin_list <- read.csv(file = "/Users/s-allens/Documents/ssp/summer_project/data/ghrelin_list.csv")
 
@@ -65,7 +65,21 @@ qtl.ghsr <- scan1(genoprobs = probs, pheno = ghrelin_list[, colnames(ghrelin_lis
                   kinship = kin, addcovar = add_covar, cores = 4)
 find_peaks(qtl.ghsr, map = map, threshold = 6, drop = 1.5)
 # Peak: chr 18, pos 4.474313, ci: 0.026149-10.21129
+# Peak: chr 4, 11.984686, ci: 0.207518-13.32408
 Q18 <- get_genoprob(18, 4.474313)
+
+qtl.food_ave <- scan1(genoprobs = probs, pheno = ghrelin_list[, colnames(ghrelin_list) == "food_ave", drop = FALSE],
+                  kinship = kin, addcovar = add_covar, cores = 4)
+find_peaks(qtl.food_ave, map = map, threshold = 6, drop = 1.5)
+# Peak: chr 1, pos 172.2283, ci 171.3744-172.4475
+# Peak: chr 7, pos 136.4545, ci = 135.5631-136.9891
+
+qtl.efnb3 <- scan1(genoprobs = probs, pheno = ghrelin_list[, colnames(ghrelin_list) == "efnb3_exp", drop = FALSE],
+                      kinship = kin, addcovar = add_covar, cores = 4)
+find_peaks(qtl.efnb3, map = map, threshold = 6, drop = 1.5)
+# chr 4, pos 5.566854, ci 0.0207518 - 13.32408
+# chr 11, pos 19.23, ci 17.680768 - 19.61891
+# chr 18, pos 3.351, ci 0.026149 - 10.25686
 
 # call important gene expressions
 svil_exp <- ghrelin_list$svil_exp

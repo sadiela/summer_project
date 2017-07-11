@@ -323,7 +323,7 @@ first_mediation_analysis <- function(begin_name, middle, end) {
   step3_val <- anova(lm(end ~ sex + middle + begin))[3,5]
   # middle and begin linked after accounting for end
   step4_val <- anova(lm(middle ~ sex + end + begin))[3,5]
-  if(step1_val < 0.001 && step2_val < 0.001 && step3_val > 0.01 && step4_val < 0.001) {
+  if(step1_val < 0.0001 && step2_val < 0.0001 && step3_val > 0.05 && step4_val < 0.0001) {
     print(paste(begin_name, "mediation relationship", sep = " "))
     return(TRUE)
   } else {
@@ -332,7 +332,15 @@ first_mediation_analysis <- function(begin_name, middle, end) {
   }
 }
 
-
+# Gets the LOD score at a specific position in a scan
+get_lod_score <- function(chr, pos, scan){
+  chr_data <- snps[snps$chr == chr]
+  chr_data$cM <- chr_data$cM - pos
+  chr_data <- chr_data[chr_data$cM >= 0,]
+  rowname <- rownames(chr_data[1,])
+  LOD <- scan[rowname,]
+  return(LOD)
+}
 
 
 
