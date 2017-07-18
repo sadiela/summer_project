@@ -43,7 +43,7 @@ lodint(f2g.scanghrl, 5, 1.5, expandtomarkers = TRUE)
 #position range for peak: 57.14493 - 79.39592 (rs13478458-rs13478542)
 
 
-Sema3a
+#Sema3a
 
 sema3a_exp <- islet.rz[, annot$a_gene_id[which(annot$gene_symbol=="Sema3a")]]
 
