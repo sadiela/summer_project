@@ -71,6 +71,19 @@ ghrelin_phenos[,2:24] %>%
   facet_wrap(~var, scales="free")
 #This looks a lot more normal
 
+ghrelin_shortlist[,6:8] %>% 
+  gather(var, value) %>%
+  ggplot(aes(x=value)) +
+  geom_histogram() +
+  facet_wrap(~var, scales="free")
+
+ghrelin_shortlist[,6:8] %>% 
+  gather(var, value) %>%
+  ggplot(aes(x=log10(value))) +
+  geom_histogram() +
+  facet_wrap(~var, scales="free")
+
+
 #convert data into a normal format so more statistical tests can be done
 sex <- ghrelin_phenos[,1]
 ghrelin_phenos <- cbind(sex, log10(ghrelin_phenos[,2:24]))
@@ -110,7 +123,7 @@ pairs(ghrelin_shortlist, upper.panel = panel.cor, diag.panel = panel.hist)
 
 
 #correlation matrix
-pcor <- cor(ghrelin_shortlist, use= "complete.obs")
+pcor <- cor(ghrelin_shortlist[2:], use= "complete.obs")
 round(pcor, digits=2)
 corrplot(pcor, order = "hclust" )
 
