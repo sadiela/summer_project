@@ -134,11 +134,13 @@ sig_list <- function(pval_vec, siglev) {
 # the genoprobs at that position
 get_genoprob <- function(chr, pos){ 
   chr_data <- snps[snps$chr == chr,]
-  chr_data$cM <- chr_data$cM - pos
-  chr_data <- chr_data[chr_data$cM >= 0,]
+  chr_data$bp <- chr_data$bp - pos
+  chr_data <- chr_data[chr_data$bp >= 0,]
   location <- which(snps$marker == chr_data$marker[1])
   return(genoprobs[,,location])
 }
+
+
 
 # Function that returns a list of all of the gene names
 # (to be used as names/rownames)
