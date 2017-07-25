@@ -123,6 +123,21 @@ plot_scan1(x = qtl.alpha, map = map, main = "Alpha Eigengene", col = "black")
 plot_scan1(x = qtl.beta, map = map, main = "Beta Surrogate (Ins2)", col = "black")
 plot_scan1(x = qtl.delta, map = map, main = "Delta Eigengene", col = "black")
 
+####################################################
+plot_scan1(x = qtl.weight_16wk, map = map, main = "Weight 16wk", col = "black")
+plot_scan1(x = qtl.weight_16wk, map = map, main = "Weight 16wk", col = "black")
+
+find_peaks(qtl.weight_16wk, map = map, threshold = 6, drop = 1.5)
+#lodindex   lodcolumn chr       pos      lod    ci_lo     ci_hi
+#1        1 weight_16wk   3 151.11144 6.312518 150.2924 151.88357
+#2        1 weight_16wk  20  48.09739 6.199593  47.8732  49.96236
+find_peaks(qtl.weight_6wk, map = map, threshold = 6, drop = 1.5)
+#lodindex  lodcolumn chr       pos      lod     ci_lo     ci_hi
+#1        1 weight_6wk   1 158.29736 7.567628 158.21451 159.46890
+#2        1 weight_6wk   9  44.62350 6.426615  44.10668  47.90314
+#3        1 weight_6wk  11  19.02527 6.750267  10.28069  19.31162
+####################################################
+
 # QTLs Driving alpha, beta, and delta gene expression
 # Alpha: chr 1 126-136, chr 6 23-27, chr 11 14-20, chr 15 58-67
 # Beta: chr 13 70-72, chr20 74-167
@@ -165,7 +180,8 @@ plot_scan1(x = qtl.beta_weight, map = map, add = TRUE, col = "red")
 
 
 
-
+############################################
+# Effect Plots: Chromosome 11, alpha_eigengene, weight_16wk, weight_6wk
 
 
 
